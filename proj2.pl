@@ -26,14 +26,27 @@ split_line([H|T], [[H|G]|S1]) :- split_line(T,[G|S1]). % G je prvni seznam ze se
 split_lines([],[]).
 split_lines([L|Ls],[H|T]) :- split_lines(Ls,T), split_line(L,H).
 
+read_input(Input) :- read_lines(LL), split_lines(LL, Input).
+
+% tri radky vstupu pro jednu stranu slouci do seznamu odpovidajicimu jedne strane
+get_input_side(Row1, Row2, Row3, [Row1, Row2, Row3]).
+% tri radky vstupu pro 4 strany slouci do seznamu odpovidajiciho 4 stranam
+get_input_sides(Row1, Row2, Row3, [Side1, Side2, Side3, Side4], Res) :-
+	get_input_side(L1, L2, L3, Side5)
+
+input_to_rubik([[L1], [L2], [L3], L4, L5, L6, [L7], [L8], [L9]], Rubik) :- 
+	get_input_side(L1, L2, L3, Side5), get_input_side(),
+	append(Side1, Side2, Rubik)
+
 
 start :-
 	prompt(_, ''),
-	read_lines(LL),
-	split_lines(LL,S),
-	write(S),
+	read_input(Input),
+	input_to_rubik(Input, Rubik),
+	write(Rubik),
 	halt.
 
+	
 /* nacte zadany pocet radku */
 read_lines2([],0).
 read_lines2(Ls,N) :-
