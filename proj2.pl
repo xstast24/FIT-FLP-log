@@ -1,3 +1,6 @@
+/************
+ * LOAD INPUT
+ ************/
 %Reads line from stdin, terminates on LF or EOF.
 read_line(L,C) :-
 	get_char(C),
@@ -37,11 +40,147 @@ get_input_sides([H1|Row1], [H2|Row2], [H3|Row3], TmpSides, Sides) :-
 	append(TmpSides, [Side], Tmp),
 	get_input_sides(Row1, Row2, Row3, Tmp, Sides).
 
+% load input to rubik cube, each side is list of its fields, sorted 1-9 from left to right (then from top to bottom)
+% format [E_side5, A_side1, B_side2, C_side3, D_side4, F_side6]
+% E = top, A = front, B = right, C = back, D = left, F = bottom
 input_to_rubik([[L1], [L2], [L3], L4, L5, L6, [L7], [L8], [L9]], Rubik) :- 
 	get_input_side(L1, L2, L3, Side5), get_input_sides(L4, L5, L6, [], Sides1to4), get_input_side(L7, L8, L9, Side6),
-	append(Sides1to4, [Side5], Sides1to5), append(Sides1to5, [Side6], Rubik).
+	append([Side5], Sides1to4, Sides1to5), append(Sides1to5, [Side6], Rubik).
 
+/***********
+ * ROTATIONS
+ ***********/
+% rotate top clockwise (looking on this side)
+rotU_top(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[Bottom]
+		],
+		[
+			[E7, E4, E1, E8, E5, E2, E9, E6, E3],
+			[B1, B2, B3, A4, A5, A6, A7, A8, A9],
+			[C1, C2, C3, B4, B5, B6, B7, B8, B9],
+			[D1, D2, D3, C4, C5, C6, C7, C8, C9],
+			[A1, A2, A3, D4, D5, D6, D7, D8, D9],
+			[Bottom]
+		]).
 
+% rotate top anticlockwise (looking on this side)
+rotU_top_rev(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[Bottom]
+		],
+		[
+			[E3, E6, E9, E2, E5, E8, E1, E4, E7],
+			[D1, D2, D3, A4, A5, A6, A7, A8, A9],
+			[A1, A2, A3, B4, B5, B6, B7, B8, B9],
+			[B1, B2, B3, C4, C5, C6, C7, C8, C9],
+			[C1, C2, C3, D4, D5, D6, D7, D8, D9],
+			[Bottom]
+		]).
+% rotate bottom clockwise (looking on this side)
+rotD_bottom(
+		[
+			[Top],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[Top],
+			[D1, D2, D3, A4, A5, A6, A7, A8, A9],
+			[A1, A2, A3, B4, B5, B6, B7, B8, B9],
+			[B1, B2, B3, C4, C5, C6, C7, C8, C9],
+			[C1, C2, C3, D4, D5, D6, D7, D8, D9],
+			[F7, F4, F1, F8, F5, F2, F9, F6, F3]
+		]).
+		
+rotF_front(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		]).
+		
+rotR_right(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		]).
+		
+rotL_left(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		]).
+		
+rotX_TODO(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		]).
+	
+/******
+ * MAIN
+ ******/
 start :-
 	prompt(_, ''),
 	read_input(Input),
@@ -49,15 +188,18 @@ start :-
 	write_rubik(Rubik),
 	halt.
 
-
-write_rubik([
+/**************
+ * PRINT OUTPUT
+ **************/
+write_rubik(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
-			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
-]) :-
+		]) :-
 	writef("%w%w%w\n%w%w%w\n%w%w%w\n", [E1, E2, E3, E4, E5, E6, E7, E8, E9]),
 	writef("%w%w%w %w%w%w %w%w%w %w%w%w\n", [A1, A2, A3, B1, B2, B3, C1, C2, C3, D1, D2, D3]),
 	writef("%w%w%w %w%w%w %w%w%w %w%w%w\n", [A4, A5, A6, B4, B5, B6, C4, C5, C6, D4, D5, D6]),
@@ -65,6 +207,25 @@ write_rubik([
 	writef("%w%w%w\n%w%w%w\n%w%w%w\n", [F1, F2, F3, F4, F5, F6, F7, F8, F9]).
 
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 /* nacte zadany pocet radku */
 read_lines2([],0).
 read_lines2(Ls,N) :-
