@@ -51,14 +51,14 @@ input_to_rubik([[L1], [L2], [L3], L4, L5, L6, [L7], [L8], [L9]], Rubik) :-
  * ROTATIONS
  ***********/
 % rotate top clockwise (looking on this side)
-rotU_top(
+rotU_up(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
-			[Bottom]
+			Bottom
 		],
 		[
 			[E7, E4, E1, E8, E5, E2, E9, E6, E3],
@@ -66,18 +66,18 @@ rotU_top(
 			[C1, C2, C3, B4, B5, B6, B7, B8, B9],
 			[D1, D2, D3, C4, C5, C6, C7, C8, C9],
 			[A1, A2, A3, D4, D5, D6, D7, D8, D9],
-			[Bottom]
+			Bottom
 		]).
 
-% rotate top anticlockwise (looking on this side)
-rotU_top_rev(
+% rotate top anti-clockwise (looking on this side)
+rotU_up_rev(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
-			[Bottom]
+			Bottom
 		],
 		[
 			[E3, E6, E9, E2, E5, E8, E1, E4, E7],
@@ -85,12 +85,13 @@ rotU_top_rev(
 			[A1, A2, A3, B4, B5, B6, B7, B8, B9],
 			[B1, B2, B3, C4, C5, C6, C7, C8, C9],
 			[C1, C2, C3, D4, D5, D6, D7, D8, D9],
-			[Bottom]
+			Bottom
 		]).
+
 % rotate bottom clockwise (looking on this side)
-rotD_bottom(
+rotD_down(
 		[
-			[Top],
+			Top,
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
@@ -98,17 +99,18 @@ rotD_bottom(
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
 		],
 		[
-			[Top],
+			Top,
 			[D1, D2, D3, A4, A5, A6, A7, A8, A9],
 			[A1, A2, A3, B4, B5, B6, B7, B8, B9],
 			[B1, B2, B3, C4, C5, C6, C7, C8, C9],
 			[C1, C2, C3, D4, D5, D6, D7, D8, D9],
 			[F7, F4, F1, F8, F5, F2, F9, F6, F3]
 		]).
-		
-rotF_front(
+
+% rotate bottom anti-clockwise (looking on this side)
+rotD_down_rev(
 		[
-			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			Top,
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
@@ -116,37 +118,95 @@ rotF_front(
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
 		],
 		[
+			Top,
+			[A1, A2, A3, A4, A5, A6, B7, B8, B9],
+			[B1, B2, B3, B4, B5, B6, C7, C8, C9],
+			[C1, C2, C3, C4, C5, C6, D7, D8, D9],
+			[D1, D2, D3, D4, D5, D6, A7, A8, A9],
+			[F3, F6, F9, F2, F5, F8, F1, F4, F7]
+		]).
+
+% rotate front clockwise (looking on this side)
+rotF_front(
+		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
-			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			Back,
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, D3, D6, D9],
+			[A7, A4, A1, A8, A5, A2, A9, A6, A3],
+			[E7, B2, B3, E8, B5, B6, E9, B8, B9],
+			Back,
+			[D1, D2, F1, D4, D5, F2, D7, D8, F3],
+			[B7, B4, B1, F4, F5, F6, F7, F8, F9]
+		]).
+
+% rotate front anti-clockwise (looking on this side)
+rotF_front_rev(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			Back,
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, B1, B4, B7],
+			[A3, A6, A9, A2, A5, A8, A1, A4, A7],
+			[F3, B2, B3, F2, B5, B6, F1, B8, B9],
+			Back,
+			[D1, D2, E9, D4, D5, E8, D7, D8, E7],
+			[D3, D6, D9, F4, F5, F6, F7, F8, F9]
 		]).
 		
+% rotate right clockwise (looking on this side)
 rotR_right(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
-			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			Left,
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
 		],
+		[
+			[E1, E2, A3, E4, E5, A6, E7, E8, A9],
+			[A1, A2, F3, A4, A5, F6, A7, A8, F9],
+			[B7, B4, B1, B8, B5, B2, B9, B6, B3],
+			[E9, C2, C3, E6, C5, C6, E3, C8, C9],
+			Left,
+			[F1, F2, C7, F4, F5, C4, F7, F8, C1]
+		]).
+
+% rotate right anti-clockwise (looking on this side)
+rotR_right_rev(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
-			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			Left,
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, C7, E4, E5, C4, E7, E8, C1],
+			[A1, A2, E3, A4, A5, E6, A7, A8, E9],
+			[B3, B6, B9, B2, B5, B8, B1, B4, B7],
+			[F9, C2, C3, F6, C5, C6, F3, C8, C9],
+			Left,
+			[F1, F2, A3, F4, F5, A6, F7, F8, A9]
 		]).
-		
+% rotate left clockwise (looking on this side)
 rotL_left(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
-			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			Right,
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
@@ -154,16 +214,55 @@ rotL_left(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			Right,
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D7, D4, D1, D8, D5, D2, D9, D6, D3],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		]).
+
+% rotate left anti-clockwise (looking on this side)
+rotL_left_rev(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			Right,
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			Right,
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D7, D4, D1, D8, D5, D2, D9, D6, D3],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		]).
+
+% rotate back clockwise (looking on this side)
+rotB_back(
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			Front,
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			Front,
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C7, C4, C1, C8, C5, C2, C9, C6, C3],
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
 		]).
-		
-rotX_TODO(
+
+% rotate back anti-clockwise (looking on this side)
+rotB_back_rev(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
-			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			Front,
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
 			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
@@ -171,9 +270,9 @@ rotX_TODO(
 		],
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
-			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			Front,
 			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
-			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[C7, C4, C1, C8, C5, C2, C9, C6, C3],
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
 		]).
