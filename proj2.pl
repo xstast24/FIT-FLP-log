@@ -290,7 +290,8 @@ solve_rubik(
 			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
 		],
-		SolutionSteps) :- 
+		SolutionSteps,
+		MaxDepth) :- 
 				get_solution_steps(
 					[		
 						[E1, E2, E3, E4, E5, E6, E7, E8, E9],
@@ -310,17 +311,19 @@ solve_rubik(
 					],
 					[],
 					SolutionSteps,
-					3, % TODO make this as a parameter in main
+					MaxDepth, % TODO make this as a parameter in main
 					_).
 
-% found solution, set ReachedDepth to false, so it is accepted
-get_solution_steps(Rubik, Rubik, SolutionSteps, SolutionSteps, _, ReachedDepth) :- write("NASEL\n"),ReachedDepth is 0, !.
-% iterations reached max depth and no solution found
+% found solution, set ReachedDepth to 0 (false), so the solution is accepted
+get_solution_steps(Rubik, Rubik, SolutionSteps, SolutionSteps, _, ReachedDepth) :- ReachedDepth is 0, !.
+% iterations reached max depth and no solution found, set ReachedDepth to 1 (true), so the solution is not used
 get_solution_steps(_, _, _, _, 0, ReachedDepth) :- ReachedDepth is 1.
-% TODO		
+% Get list of all steps from input Rubik to solution RubikDesired. When calling initialize: PreviousSteps with [],
+% MaxDepth with number of max iterations (each iteration tests all rotations), ReachedDepth with _ (underscore).
 get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, MaxDepth, ReachedDepth) :-
 	TmpDepth is MaxDepth - 1,
 	TmpDepth @>= 0,
+	% test all rotations, any of them can lead to a result
 	(
 		(rotU_up(Rubik, TmpRubik),
 		append(PreviousSteps, [TmpRubik], TmpSteps),
@@ -383,7 +386,6 @@ get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, MaxDepth, 
 		ReachedDepth == 0)
 	).
 
- 
 /******
  * MAIN
  ******/
@@ -391,9 +393,9 @@ start :-
 	prompt(_, ''),
 	read_input(Input),
 	input_to_rubik(Input, Rubik),
-	write_rubik(Rubik), write("\n"),
+	write_rubik(Rubik), write("\n\n"),
 	
-	solve_rubik(Rubik, SolutionSteps),
+	solve_rubik(Rubik, SolutionSteps, 3),
 	
 	write_rubiks(SolutionSteps),
 	halt.
@@ -401,9 +403,14 @@ start :-
 /**************
  * PRINT OUTPUT
  **************/
+% print list of rubik cubes to output, separated by an empty line
 write_rubiks([]).
-write_rubiks([Cube | Cubes]) :- write_rubik(Cube), write("\n"), write_rubiks(Cubes).
+write_rubiks([Cube | Cubes]) :-
+	(non_empty(Cubes), write_rubik(Cube), write("\n\n"), write_rubiks(Cubes)) % separate cubes by empty line
+	;
+	write_rubik(Cube). % do not add empty line after the last one
 
+% print rubik cube to output
 write_rubik(
 		[
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
@@ -417,4 +424,7 @@ write_rubik(
 	writef("%w%w%w %w%w%w %w%w%w %w%w%w\n", [A1, A2, A3, B1, B2, B3, C1, C2, C3, D1, D2, D3]),
 	writef("%w%w%w %w%w%w %w%w%w %w%w%w\n", [A4, A5, A6, B4, B5, B6, C4, C5, C6, D4, D5, D6]),
 	writef("%w%w%w %w%w%w %w%w%w %w%w%w\n", [A7, A8, A9, B7, B8, B9, C7, C8, C9, D7, D8, D9]),
-	writef("%w%w%w\n%w%w%w\n%w%w%w\n", [F1, F2, F3, F4, F5, F6, F7, F8, F9]).
+	writef("%w%w%w\n%w%w%w\n%w%w%w", [F1, F2, F3, F4, F5, F6, F7, F8, F9]).
+
+% check if list is not empty - true if non-empty, false if empty
+non_empty([_|_]) :- true.
