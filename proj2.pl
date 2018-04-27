@@ -310,21 +310,78 @@ solve_rubik(
 					],
 					[],
 					SolutionSteps,
-					2, % TODO make this as a parameter in main
+					3, % TODO make this as a parameter in main
 					_).
 
 % found solution, set ReachedDepth to false, so it is accepted
-get_solution_steps(Rubik, Rubik, SolutionSteps, SolutionSteps, _, ReachedDepth) :- write("Nasel"),ReachedDepth is 0, !.
+get_solution_steps(Rubik, Rubik, SolutionSteps, SolutionSteps, _, ReachedDepth) :- write("NASEL\n"),ReachedDepth is 0, !.
 % iterations reached max depth and no solution found
-get_solution_steps(_, _, _, _, 0, ReachedDepth) :- write("Fail"), ReachedDepth is 1, !.
+get_solution_steps(_, _, _, _, 0, ReachedDepth) :- ReachedDepth is 1.
 % TODO		
 get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, MaxDepth, ReachedDepth) :-
-	rotU_up(Rubik, TmpRubik),
-	append(PreviousSteps, [TmpRubik], TmpSteps),
 	TmpDepth is MaxDepth - 1,
-	get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
-	
-	ReachedDepth == 0.
+	TmpDepth @>= 0,
+	(
+		(rotU_up(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotU_up_rev(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotD_down(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotD_down_rev(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotF_front(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotF_front_rev(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotR_right(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotR_right_rev(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotL_left(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotL_left_rev(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotB_back(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+		;
+		(rotB_back_rev(Rubik, TmpRubik),
+		append(PreviousSteps, [TmpRubik], TmpSteps),
+		get_solution_steps(TmpRubik, RubikDesired, TmpSteps, SolutionSteps, TmpDepth, ReachedDepth),
+		ReachedDepth == 0)
+	).
 
  
 /******
@@ -334,7 +391,7 @@ start :-
 	prompt(_, ''),
 	read_input(Input),
 	input_to_rubik(Input, Rubik),
-	write_rubik(Rubik), %TODO remove debug print
+	write_rubik(Rubik), write("\n"),
 	
 	solve_rubik(Rubik, SolutionSteps),
 	
@@ -345,7 +402,7 @@ start :-
  * PRINT OUTPUT
  **************/
 write_rubiks([]).
-write_rubiks([Cube | Cubes]) :- write_rubik(Cube), write_rubiks(Cubes).
+write_rubiks([Cube | Cubes]) :- write_rubik(Cube), write("\n"), write_rubiks(Cubes).
 
 write_rubik(
 		[
