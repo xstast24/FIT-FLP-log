@@ -1,6 +1,30 @@
-/********************
- * LOAD INPUT TO CUBE
- ********************/
+% FLP Logicky projekt - Rubikova kostka
+% Filip Stastny (xstast24)
+/********
+ * MAIN 
+ * Load a Rubik's cube and find a sequence of steps needed to solve the cube.
+ * Use 12 rotations: Up/Down/Front/Right/Left/Back clockwise and anti-clockwise.
+ ********/
+start :-
+	% Load input and parse it to a structure representing a Rubik's cube
+	prompt(_, ''),
+	read_input(Input),
+	input_to_rubik(Input, Rubik),
+	write_rubik(Rubik), write("\n\n"), % print the initial Rubik's cube
+	
+	% Find steps leading to a solved Rubik's cube
+	MinDepth = 0, % find only solutions longer than this, e.g. minimally 5 rotations
+	MaxDepth = 100, % find only solutions shorter than this, e.g. maximally 20 rotations
+	solve_rubik(Rubik, SolutionSteps, MinDepth, MaxDepth),
+	
+	% Print the final output
+	write_rubiks(SolutionSteps),
+	halt.
+
+
+/**********************
+ * LOAD INPUT TO CUBE *
+ **********************/
 %Reads line from stdin, terminates on LF or EOF.
 read_line(L,C) :-
 	get_char(C),
@@ -47,9 +71,11 @@ input_to_rubik([[L1], [L2], [L3], L4, L5, L6, [L7], [L8], [L9]], Rubik) :-
 	get_input_side(L1, L2, L3, Side5), get_input_sides(L4, L5, L6, [], Sides1to4), get_input_side(L7, L8, L9, Side6),
 	append([Side5], Sides1to4, Sides1to5), append(Sides1to5, [Side6], Rubik).
 
-/***********
+
+/*************
  * ROTATIONS
- ***********/
+ * Up/Down/Front/Right/Left/Back clockwise and anti-clockwise.
+ *************/
 % rotate top clockwise (looking on this side)
 rotU_up(
 		[
@@ -277,9 +303,10 @@ rotB_back_rev(
 			[F1, F2, F3, F4, F5, F6, B9, B6, B3]
 		]).
 
-/**************
- * SOLVING CUBE		
- **************/
+
+/*******************
+ * SEARCH SOLUTION *
+ *******************/
 /* For given Rubik's cube return list of rubik cube states that lead to the solution. Each state is reachable from
 the previous one, using a single rotation (Up/Down/Front/Right/Left/Back and their reverse equivalents). Parameters:
 @Rubik cube - rubik cube combination to start with
@@ -420,28 +447,10 @@ get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, Depth, Rea
 		ReachedDepth == 0)
 	).
 
-/******
- * MAIN
- ******/
-start :-
-	% Load input and parse it to a structure representing a Rubik's cube
-	prompt(_, ''),
-	read_input(Input),
-	input_to_rubik(Input, Rubik),
-	write_rubik(Rubik), write("\n\n"), % print the initial Rubik's cube
-	
-	% Find steps leading to a solved Rubik's cube
-	MinDepth = 0, % find only solutions longer than this, e.g. minimally 5 rotations
-	MaxDepth = 100, % find only solutions shorter than this, e.g. maximally 20 rotations
-	solve_rubik(Rubik, SolutionSteps, MinDepth, MaxDepth),
-	
-	% Print the final output
-	write_rubiks(SolutionSteps),
-	halt.
 
-/**************
- * PRINT OUTPUT
- **************/
+/****************
+ * PRINT OUTPUT *
+ ****************/
 % print list of rubik cubes to output, separated by an empty line
 write_rubiks([]).
 write_rubiks([Cube | Cubes]) :-
