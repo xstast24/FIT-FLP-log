@@ -1,0 +1,31 @@
+Autor: Filip Šťastný (xstast24)
+
+Přiložené testovací vstupy (formát dle zadání, očekává validní vstup):
+in_zadani.txt -	[0.02 s] vstup ze zadání, výsledek dosažen 2 kroky.
+in_1step.txt  -	[0.04 s] složit kostku je možné jedinou rotací.
+in_4steps.txt -	[0.06 s] složit je možné 4 rotacemi
+in_7steps.txt -	[9 s] složit kostku je možné 7 kroky
+
+Zdrojový kód:
+Je viditelně členěn do částí pro načtení vstupu, práci s kostkou (rotace), provádění algoritmu
+a tisknutí výstupu. Kód je popisně komentován. Každá strana kostky je reprezentovaná listem vrcholů
+(X1 - X9), kostka pak seznamem stran.
+
+Algoritmus:
+Využívá 12 možných rotací kostky - každá strana (Up/Down/Right/Left/Front/Back) může být rotována
+po směru a proti směru hodinových ručiček.
+Využívá algoritmus IDS - pomocí DFS algoritmu zkouší všechny možné rotace, dokud
+nedosáhne výsledku. Prohledávací algoritmus je volán opakovaně s postupně rostoucí hloubkou (určena
+parametry MinDepth a MaxDepth), aby našel co nejkratší výsledek - když najde, ukončí prohledávání.
+
+Program:
+Počet prohledaných rotací je přibližně O(r^n), kde 'r' je počet možých rotací a 'n' počet kroků
+nutných ke složení. Jelikož prolog každou novou iteraci řešení počítá celou znovu, běh programu
+pro 8 a více kroků trvá déle než minutu a extrémně se navyšuje.
+Možná optimalizace by byla implementací mezikroků algoritmu, který by vedl k výsledku díky
+postupnému hledání mezivýsledků, které by byly dosažitelné vždy maximálně 7 kroky (např. složení
+středové čáry jedné strany, poté kříže jedné strany, poté celé strany, atd.).
+
+Ukázka spuštění:
+Linux/unix: ./flp18-log < in_1step.txt
+Windows: type in_1step.txt | flp18-log

@@ -3,19 +3,18 @@
 /********
  * MAIN 
  * Load a Rubik's cube and find a sequence of steps needed to solve the cube.
- * Use 12 rotations: Up/Down/Front/Right/Left/Back clockwise and anti-clockwise.
  ********/
 start :-
 	% Load input and parse it to a structure representing a Rubik's cube
 	prompt(_, ''),
 	read_input(Input),
 	input_to_rubik(Input, Rubik),
-	write_rubik(Rubik), write("\n\n"), % print the initial Rubik's cube
+	write_rubik(Rubik), % print the initial Rubik's cube
 	
 	% Find steps leading to a solved Rubik's cube
-	MinDepth = 0, % find only solutions longer than this, e.g. minimally 5 rotations
-	MaxDepth = 100, % find only solutions shorter than this, e.g. maximally 20 rotations
-	solve_rubik(Rubik, SolutionSteps, MinDepth, MaxDepth),
+	MinDepth = 0, % find only solutions longer than this, e.g. minimally 2 rotations
+	MaxDepth = 20, % find only solutions shorter than this, e.g. maximally 7 rotations
+	solve_rubik_DFS(Rubik, SolutionSteps, MinDepth, MaxDepth),
 	
 	% Print the final output
 	write_rubiks(SolutionSteps),
@@ -307,14 +306,14 @@ rotB_back_rev(
 /*******************
  * SEARCH SOLUTION *
  *******************/
-/* For given Rubik's cube return list of rubik cube states that lead to the solution. Each state is reachable from
+/* Using DFS algorithm, for given Rubik's cube return list of rubik cube states that lead to the solution. Each state is reachable from
 the previous one, using a single rotation (Up/Down/Front/Right/Left/Back and their reverse equivalents). Parameters:
 @Rubik cube - rubik cube combination to start with
 @SolutionSteps - returns a list of steps (cubes) leading to the solution
 @MinDepth -  min. length of a possible solution (e.g. 5 if wanted only solutions longer than 5 steps)
 @MaxDepth - max. depth for searching - will not search solutions longer than this
 */
-solve_rubik(
+solve_rubik_DFS(
 		[	
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
 			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
@@ -364,7 +363,7 @@ get_shortest_solution(Rubik, RubikDesired, SolutionSteps, MaxDepth, CurrentDepth
 			(TmpDepth is CurrentDepth + 1,
 			get_shortest_solution(Rubik, RubikDesired, SolutionSteps, MaxDepth, TmpDepth))
 		).
-		
+	
 
 /*Get list of all steps from input Rubik to solution RubikDesired. Parameters:
 @Rubik - init with starting cube combination
@@ -454,9 +453,7 @@ get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, Depth, Rea
 % print list of rubik cubes to output, separated by an empty line
 write_rubiks([]).
 write_rubiks([Cube | Cubes]) :-
-	(non_empty(Cubes), write_rubik(Cube), write("\n\n"), write_rubiks(Cubes)) % separate cubes by empty line
-	;
-	write_rubik(Cube). % do not add empty line after the last one
+	nl, nl, write_rubik(Cube), write_rubiks(Cubes).
 
 % print rubik cube to output
 write_rubik(

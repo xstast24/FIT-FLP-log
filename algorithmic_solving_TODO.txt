@@ -1,0 +1,43 @@
+solve_rubik_algorithmic(
+		[	
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		SolutionSteps,
+		MinDepth,
+		MaxDepth)
+	:- 
+	get_shortest_solution(
+		[		
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[[_, E5, _, E5, E5, E5, _, E5, _],_,_,_,_,_],SolutionSteps1,MaxDepth,MinDepth),
+	posledni(SolutionSteps1, TmpStep1),
+	
+	get_shortest_solution(TmpStep1,[[E5, E5, E5, E5, E5, E5, _, E5, _],_,_,_,_,_],SolutionSteps2,MaxDepth,MinDepth),
+	posledni(SolutionSteps2, TmpStep2),
+	
+	get_shortest_solution(TmpStep2, [[E5, E5, E5, E5, E5, E5, E5, E5, _],[A5,A5,_,_,A5,_,_,_,E5],[_,B5,B5,_,B5,_,B5,_,_],_,_,_],SolutionSteps3,MaxDepth,MinDepth),
+	posledni(SolutionSteps3, TmpStep3),
+	
+	get_shortest_solution(TmpStep3, [[E5, E5, E5, E5, E5, E5, E5, E5, E5],[A5,A5,A5,_,A5,_,_,_,_],[B5,B5,B5,_,B5,_,_,_,_],_,_,_],
+		SolutionSteps4,MaxDepth,MinDepth),
+	posledni(SolutionSteps4, TmpStep4),
+	write_rubik(TmpStep4), write("\n"),
+	
+	get_shortest_solution(TmpStep3, [[E5, E5, E5, E5, E5, E5, E5, E5, E5],[A5,A5,A5,_,A5,_,_,_,_],[B5,B5,B5,_,B5,_,_,_,_],_,_,_],
+		SolutionSteps4,MaxDepth,MinDepth),
+	posledni(SolutionSteps4, TmpStep4),
+	write_rubik(TmpStep4), write("\n").
+	
+posledni([H], H) :- !.
+posledni([_|T], Res) :- posledni(T, Res).
