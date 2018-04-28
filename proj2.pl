@@ -280,7 +280,13 @@ rotB_back_rev(
 /**************
  * SOLVING CUBE		
  **************/
-% For given Rubik's cube return list of rubik cube states that lead to the solution.
+/* For given Rubik's cube return list of rubik cube states that lead to the solution. Each state is reachable from
+the previous one, using a single rotation (Up/Down/Front/Right/Left/Back and their reverse equivalents). Parameters:
+@Rubik cube - rubik cube combination to start with
+@SolutionSteps - returns a list of steps (cubes) leading to the solution
+@MinDepth -  min. length of a possible solution (e.g. 5 if wanted only solutions longer than 5 steps)
+@MaxDepth - max. depth for searching - will not search solutions longer than this
+*/
 solve_rubik(
 		[	
 			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
@@ -291,37 +297,65 @@ solve_rubik(
 			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
 		],
 		SolutionSteps,
-		MaxDepth) :- 
-				get_solution_steps(
-					[		
-						[E1, E2, E3, E4, E5, E6, E7, E8, E9],
-						[A1, A2, A3, A4, A5, A6, A7, A8, A9],
-						[B1, B2, B3, B4, B5, B6, B7, B8, B9],
-						[C1, C2, C3, C4, C5, C6, C7, C8, C9],
-						[D1, D2, D3, D4, D5, D6, D7, D8, D9],
-						[F1, F2, F3, F4, F5, F6, F7, F8, F9]
-					],
-					[	
-						[E5, E5, E5, E5, E5, E5, E5, E5, E5],
-						[A5, A5, A5, A5, A5, A5, A5, A5, A5],
-						[B5, B5, B5, B5, B5, B5, B5, B5, B5],
-						[C5, C5, C5, C5, C5, C5, C5, C5, C5],
-						[D5, D5, D5, D5, D5, D5, D5, D5, D5],
-						[F5, F5, F5, F5, F5, F5, F5, F5, F5]
-					],
-					[],
-					SolutionSteps,
-					MaxDepth, % TODO make this as a parameter in main
-					_).
+		MinDepth,
+		MaxDepth)
+	:- 
+	get_shortest_solution(
+		[		
+			[E1, E2, E3, E4, E5, E6, E7, E8, E9],
+			[A1, A2, A3, A4, A5, A6, A7, A8, A9],
+			[B1, B2, B3, B4, B5, B6, B7, B8, B9],
+			[C1, C2, C3, C4, C5, C6, C7, C8, C9],
+			[D1, D2, D3, D4, D5, D6, D7, D8, D9],
+			[F1, F2, F3, F4, F5, F6, F7, F8, F9]
+		],
+		[	
+			[E5, E5, E5, E5, E5, E5, E5, E5, E5],
+			[A5, A5, A5, A5, A5, A5, A5, A5, A5],
+			[B5, B5, B5, B5, B5, B5, B5, B5, B5],
+			[C5, C5, C5, C5, C5, C5, C5, C5, C5],
+			[D5, D5, D5, D5, D5, D5, D5, D5, D5],
+			[F5, F5, F5, F5, F5, F5, F5, F5, F5]
+		],
+		SolutionSteps,
+		MaxDepth,
+		MinDepth).
 
+/*Get shortest number of rotations leading to the result. Parameters:
+@Rubik - starting cube combination
+@RubikDesired - target cube combination (the one we want to reach)
+@SolutionSteps - list of cube combinations leading to the target (each reachable by a single rotation from the previous one)
+@MaxDepth - max. depth for searching - will not search solutions longer than this
+@CurrentDepth - min. length of a possible solution (e.g. 5 if wanted only solutions longer than 5 steps)
+*/
+get_shortest_solution(Rubik, RubikDesired, SolutionSteps, MaxDepth, CurrentDepth) :-
+		MaxDepth @>= CurrentDepth,
+		(
+			(get_solution_steps(Rubik, RubikDesired, [], SolutionSteps, CurrentDepth, ReachedDepth),
+			ReachedDepth == 0)
+			;
+			(TmpDepth is CurrentDepth + 1,
+			get_shortest_solution(Rubik, RubikDesired, SolutionSteps, MaxDepth, TmpDepth))
+		).
+		
+
+/*Get list of all steps from input Rubik to solution RubikDesired. Parameters:
+@Rubik - init with starting cube combination
+@RubikDesired - init with target cube combination (the one we want to reach)
+@PreviousSteps - init with [] (empty list), temporary list of combinations
+@SolutionSteps - list of cube combinations leading to the target (each reachable by a single rotation from the previous one)
+@Depth - init with preferred depth for searching (will not search solutions longer than this)
+@ReachedDepth - is 0 if solution found, is 1 if solution not found
+% Note: Searches always the solution with closest length to given Depth. E.g. if solution by 4 steps exists,
+% but Depth is 20, this will find a solution near to 20 steps long (but not longer than 20).
+*/
 % found solution, set ReachedDepth to 0 (false), so the solution is accepted
 get_solution_steps(Rubik, Rubik, SolutionSteps, SolutionSteps, _, ReachedDepth) :- ReachedDepth is 0, !.
 % iterations reached max depth and no solution found, set ReachedDepth to 1 (true), so the solution is not used
 get_solution_steps(_, _, _, _, 0, ReachedDepth) :- ReachedDepth is 1.
-% Get list of all steps from input Rubik to solution RubikDesired. When calling initialize: PreviousSteps with [],
-% MaxDepth with number of max iterations (each iteration tests all rotations), ReachedDepth with _ (underscore).
-get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, MaxDepth, ReachedDepth) :-
-	TmpDepth is MaxDepth - 1,
+% try all rotations until got a solution
+get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, Depth, ReachedDepth) :-
+	TmpDepth is Depth - 1,
 	TmpDepth @>= 0,
 	% test all rotations, any of them can lead to a result
 	(
@@ -390,13 +424,18 @@ get_solution_steps(Rubik, RubikDesired, PreviousSteps, SolutionSteps, MaxDepth, 
  * MAIN
  ******/
 start :-
+	% Load input and parse it to a structure representing a Rubik's cube
 	prompt(_, ''),
 	read_input(Input),
 	input_to_rubik(Input, Rubik),
-	write_rubik(Rubik), write("\n\n"),
+	write_rubik(Rubik), write("\n\n"), % print the initial Rubik's cube
 	
-	solve_rubik(Rubik, SolutionSteps, 3),
+	% Find steps leading to a solved Rubik's cube
+	MinDepth = 0, % find only solutions longer than this, e.g. minimally 5 rotations
+	MaxDepth = 100, % find only solutions shorter than this, e.g. maximally 20 rotations
+	solve_rubik(Rubik, SolutionSteps, MinDepth, MaxDepth),
 	
+	% Print the final output
 	write_rubiks(SolutionSteps),
 	halt.
 
